@@ -1,33 +1,20 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Input, Button } from "react-native-elements";
 import Spacer from "../components/Spacer";
 import { Context as AuthContext } from "../context/AuthContext";
 
-const SignupScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { state, signup } = useContext(AuthContext);
+import AuthForm from "../components/AuthForm";
+import NavLink from "../components/NavLink";
+import { NavigationEvents } from "react-navigation";
+
+const SignupScreen = () => {
+  const { state, signup, clearErrorMessage } = useContext(AuthContext);
   return (
     <View style={styles.container}>
+      <NavigationEvents onWillFocus={clearErrorMessage} />
+      <AuthForm headerLabel="Sign up for Tracker" errorMessage={state.errorMessage} onSubmit={signup} submitButtonLabel="Create an account" />
       <Spacer>
-        <Text style={{ marginBottom: 20 }} h3>
-          Sign up for Tracker
-        </Text>
-      </Spacer>
-      <Spacer>
-        <Input autoCapitalize="none" autoCorrect={false} label="Email" value={email} onChangeText={setEmail} />
-      </Spacer>
-      <Spacer>
-        <Input secureTextEntry autoCapitalize="none" autoCorrect={false} label="Password" value={password} onChangeText={setPassword} />
-      </Spacer>
-      <Spacer>
-        {state.errorMessage?.length > 0 && <Text style={{ color: "red" }}>{state.errorMessage} </Text>}
-        <Button title="Create an account" onPress={() => signup({ email, password })}></Button>
-      </Spacer>
-      <Spacer>
-        <Text>Already have an account? </Text>
-        <Button title="Sign in" onPress={() => navigation.navigate("Signin")}></Button>
+        <NavLink label="Already have an account? Sign In" routeName="Signin" />
       </Spacer>
     </View>
   );
@@ -43,7 +30,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    marginBottom: 200,
+    marginBottom: 250,
+  },
+  link: {
+    color: "blue",
   },
 });
 
