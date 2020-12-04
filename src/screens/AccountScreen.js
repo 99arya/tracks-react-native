@@ -16,7 +16,7 @@ const AccountScreen = () => {
 
 AccountScreen.navigationOptions = () => {
   return {
-    title: "Add Track",
+    title: "Account",
     tabBarIcon: <FontAwesome name="gear" size={20} />,
   };
 };
