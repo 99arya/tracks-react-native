@@ -9,6 +9,17 @@ const locationReducer = (state, action) => {
       return { ...state, currentLocation: action.payload };
     case "clear_error":
       return { ...state, errorMessage: "" };
+    case "start_recording":
+      return { ...state, recording: true };
+    case "stop_recording":
+      return { ...state, recording: false };
+    case "add_current_location":
+      return { ...state, locations: [...state.locations, action.payload] };
+    case "change_name":
+      return { ...state, name: action.payload };
+    case "reset":
+      return { ...state, name: "", locations: [] };
+
     default:
       return state;
   }
@@ -18,13 +29,7 @@ const clearErrorMessage = (dispatch) => () => dispatch({ type: "clear_error" });
 
 const startRecording = (dispatch) => async () => {
   try {
-    const token = await AsyncStorage.getItem("token");
-    if (token) {
-      dispatch({ type: "signup_success", payload: token });
-      navigate("TrackList");
-    } else {
-      navigate("Signup");
-    }
+    dispatch({ type: "start_recording" });
   } catch (error) {
     console.log("error", error.message);
   }
@@ -32,21 +37,28 @@ const startRecording = (dispatch) => async () => {
 
 const stopRecording = (dispatch) => async () => {
   try {
-    const token = await AsyncStorage.getItem("token");
-    if (token) {
-      dispatch({ type: "signup_success", payload: token });
-      navigate("TrackList");
-    } else {
-      navigate("Signup");
+    dispatch({ type: "stop_recording" });
+  } catch (error) {
+    console.log("error", error.message);
+  }
+};
+
+const addLocation = (dispatch) => async (location, recording) => {
+  try {
+    dispatch({ type: "add_location_context", payload: location });
+    if (recording) {
+      dispatch({ type: "add_current_location", payload: location });
     }
   } catch (error) {
     console.log("error", error.message);
   }
 };
 
-const addLocation = (dispatch) => async (location) => {
+const changeName = (dispatch) => (name) => dispatch({ type: "change_name", payload: name });
+
+const reset = (dispatch) => async () => {
   try {
-    dispatch({ type: "add_location_context", payload: location });
+    dispatch({ type: "reset" });
   } catch (error) {
     console.log("error", error.message);
   }
@@ -54,6 +66,6 @@ const addLocation = (dispatch) => async (location) => {
 
 export const { Context, Provider } = createDataContext(
   locationReducer,
-  { startRecording, stopRecording, addLocation },
-  { recording: false, locations: [], currentLocation: null, errorMessage: "" }
+  { startRecording, stopRecording, addLocation, changeName, reset },
+  { recording: false, locations: [], currentLocation: null, errorMessage: "", name: "" }
 );
